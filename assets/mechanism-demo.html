@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>视频讲解 · 机制动画样例</title>
+<style>
+:root{color-scheme:dark;--cyan:#65c8d3;--gold:#f0d37c;--green:#9acb82;--purple:#b292cf}
+*{box-sizing:border-box}body{margin:0;background:#101214;color:#e9e8e2;font-family:"Microsoft YaHei",sans-serif}main{max-width:1100px;margin:auto;padding:28px 22px}h1{font-size:24px;font-weight:500;margin:0 0 10px}p{color:#aeb1b6;line-height:1.8}button{border:1px solid #484c52;border-radius:6px;background:#1c2024;padding:10px 14px;color:#e9e8e2;cursor:pointer}button[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}nav{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0}svg{width:100%;display:block;aspect-ratio:16/9;background:#050608;border:1px solid #2c3035;border-radius:8px}svg text{font-family:"Microsoft YaHei",sans-serif;font-size:20px;fill:#ddd}svg .small{font-size:16px;fill:#a5aab0}svg .title{font-size:26px;fill:#eee}svg .formula{font-family:Georgia,serif;font-size:27px}svg .cyan{fill:var(--cyan)}svg .gold{fill:var(--gold)}svg .green{fill:var(--green)}svg .purple{fill:var(--purple)}.controls{display:flex;gap:12px;align-items:center;margin:16px 0}input{flex:1;min-width:80px;accent-color:#f0d37c}output{min-width:95px;font-variant-numeric:tabular-nums}#notes{min-height:58px}footer{font-size:13px;color:#9298a0;line-height:1.8;margin-top:26px}a{color:var(--cyan)}
+</style>
+<main>
+<h1>视频讲解 · 让动作承担解释</h1>
+<p>三个自绘样例：改变一个变量、联动多个视图、逐步搭出流程。播放或拖动时间，观察每个动作怎样回答当前问题。</p>
+<nav aria-label="选择演示"><button data-scene="invariant" aria-pressed="true">① 改变量，看不变量</button><button data-scene="retrieval" aria-pressed="false">② 空间关系变成选择</button><button data-scene="pipeline" aria-pressed="false">③ 从对象走到全流程</button></nav>
+<svg id="stage" viewBox="0 0 960 540" role="img" aria-label="机制动画"></svg>
+<div class="controls"><button id="play">播放</button><button id="restart">重播</button><input id="time" type="range" min="0" max="24" step="0.05" value="0" aria-label="动画时间"><output id="clock">0.0 / 24 s</output></div>
+<p id="notes"></p>
+<footer>本页为原创教学示意，分数和候选对象均为构造样例。它演示分镜方法，不代表原片模型或真实实验结果。无配音；口播以字幕句呈现。可直接作为离线 HTML 打开。</footer>
+</main>
+<script>
+const stage=document.querySelector('#stage'),slider=document.querySelector('#time'),clock=document.querySelector('#clock'),play=document.querySelector('#play'),notes=document.querySelector('#notes');
+let scene='invariant',t=0,running=false,last=0;
+const C={cyan:'#65c8d3',gold:'#f0d37c',green:'#9acb82',purple:'#b292cf',white:'#ddd',gray:'#626871'};
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const show=(at,d=0.6)=>clamp((t-at)/d);
+const text=(x,y,s,cls='')=>`<text x="${x}" y="${y}" class="${cls}">${s}</text>`;
+const line=(x1,y1,x2,y2,color=C.gray,width=2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}"/>`;
+const group=(opacity,s)=>`<g opacity="${opacity}">${s}</g>`;
+const circle=(x,y,r,c)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+const rect=(x,y,w,h,c,stroke='none')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}" stroke="${stroke}"/>`;
+const subtitle=s=>text(480,500,s,'small').replace('<text ','<text text-anchor="middle" ');
+const defs=`<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10" fill="context-stroke"/></marker></defs>`;
+const arrow=(x1,y1,x2,y2,c)=>line(x1,y1,x2,y2,c).replace('/>',' marker-end="url(#arrow)"/>');
+function invariant(){
+ let s=text(40,48,'沿同一条直线移动点，什么保持不变？','title');
+ const ox=115,oy=365,dx=240,dy=-90;
+ const u=t<7?0:t<16?Math.sin((t-7)/9*Math.PI*2)*0.45:0;
+ const px=215+dx*u,py=270+dy*u;
+ s+=line(80,365,470,365)+line(115,420,115,110)+text(98,394,'O','small');
+ s+=line(90,316.875,475,172.5,C.gray)+text(450,152,'固定直线','small');
+ s+=group(show(1),arrow(ox,oy,px,py,C.gold)+circle(px,py,6,C.gold)+text(px-22,py-15,'o','gold'));
+ s+=group(show(3),arrow(px,py,px+dx*.5,py+dy*.5,C.cyan)+text(px+120,py-58,'d','cyan'));
+ let poly=`<polygon points="${ox},${oy} ${px},${py} ${px+dx*.5},${py+dy*.5} ${ox+dx*.5},${oy+dy*.5}" fill="${C.green}" fill-opacity="0.15" stroke="${C.green}"/>`;
+ s+=group(show(5),poly+text(520,185,'有向面积 o × d','green')+text(520,222,'−6,900（本示例数值）','green'));
+ s+=group(show(16),text(520,287,'(o + s d) × d = o × d','formula')+text(520,329,'因为 d × d = 0','formula'));
+ let sub=t<3?'先在直线上取一个点，叫作 o。':t<7?'方向 d 保持不变。绿色区域表示它们张成的有向面积。':t<16?'只移动 o：形状改变，有向面积保持不变。':t<21?'把新点写成 o + s d，增加的叉积项恰好为零。':'这个描述跟选哪个点无关，因此能用来描述整条直线。';
+ s+=subtitle(sub);notes.textContent='教学结构：对象命名 → 改变一个变量 → 观察保持量 → 公式解释 → 回到用途。坐标、方向和面积由同一时刻计算。';return s;
+}
+function retrieval(){
+ let s=text(40,48,'参考对象怎样从空间关系变成选择？','title');
+ const pts=[[220,170],[280,205],[225,315],[345,290]];
+ const qx=320+Math.sin(clamp((t-3)/8)*Math.PI)*55,qy=190+clamp((t-3)/8)*85;
+ const scores=pts.map(([x,y])=>clamp(1-Math.hypot(x-qx,y-qy)/230));
+ const selected=scores.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v).slice(0,2).map(v=>v.i);
+ s+=rect(100,115,310,285,'none',C.gray);
+ pts.forEach(([x,y],i)=>{s+=circle(x,y,11,C.purple)+text(x+15,y+5,String.fromCharCode(65+i),'purple');});
+ s+=group(show(1),circle(qx,qy,8,C.gold)+text(qx+14,qy-8,'查询','gold'));
+ pts.forEach(([x,y],i)=>{s+=group(show(3),line(qx,qy,x,y,C.gray));});
+ s+=group(show(11),text(520,125,'距离越近，示意分数越高','small'));
+ scores.forEach((score,i)=>{const h=show(11+i*.3)*score*170;let col=t>=17&&selected.includes(i)?C.gold:C.purple;s+=group(show(11),rect(520+i*75,340-h,42,h,col)+text(530+i*75,372,String.fromCharCode(65+i),'small')+text(520+i*75,320-h,score.toFixed(2),'small'));});
+ s+=group(show(17),text(520,424,'选择：'+selected.map(i=>String.fromCharCode(65+i)).join('、'),'gold'));
+ s+=subtitle(t<3?'先把候选和查询放在同一张图里。':t<11?'查询移动时，到每个候选的距离同时变化。':t<17?'把空间关系转成可比较的分数。':'按分数选择两个候选，然后送入下一步。');
+ notes.textContent='教学结构：空间关系 → 数值 → 排序 → 选中对象。这里只用距离构造示例分数；实际检索应使用自己的评分和数据。';return s;
+}
+function pipeline(){
+ let s=text(40,48,'先认识一个对象，再把它送进完整流程','title');
+ const boxes=[['图像',110,C.cyan,1],['表示',310,C.gold,5],['处理',510,C.purple,10],['输出',710,C.green,15]];
+ boxes.forEach(([label,x,c,at],i)=>{let block=rect(x,205,120,110,'#111519',c)+text(x+34,272,label);s+=group(show(at),block);if(i)s+=group(show(at),arrow(x-80,260,x-8,260,c));});
+ const u=clamp((t-16)/3.5);s+=group(show(16),circle(170+660*u,300,6,C.gold));
+ s+=group(show(20),`<path d="M770,205 Q770,115 470,115 Q170,115 170,205" fill="none" stroke="${C.green}" stroke-width="2" marker-end="url(#arrow)"/>`+text(370,103,'可选反馈：把结果存起来','small'));
+ s+=subtitle(t<5?'先只看输入对象。':t<10?'为了方便处理，先换一种表示。':t<15?'处理模块接收这个表示。':t<20?'输出重新成为我们要使用的对象。':'需要连续工作时，再把结果送回已有信息。');
+ notes.textContent='教学结构：完整路径逐步显现，前面的对象保留为后续参照。反馈只在任务确实需要时加入。';return s;
+}
+function render(){stage.innerHTML=defs+({invariant,retrieval,pipeline}[scene])();slider.value=t;clock.value=`${t.toFixed(1)} / 24 s`;}
+function stop(){running=false;play.textContent='播放';}
+document.querySelectorAll('[data-scene]').forEach(b=>b.onclick=()=>{stop();scene=b.dataset.scene;t=0;document.querySelectorAll('[data-scene]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));render();});
+slider.oninput=()=>{stop();t=Number(slider.value);render();};
+play.onclick=()=>{if(running)stop();else{if(t>=24)t=0;running=true;last=performance.now();play.textContent='暂停';}};
+document.querySelector('#restart').onclick=()=>{t=0;last=performance.now();render();};
+function loop(now){if(running){t=Math.min(24,t+(now-last)/1000);last=now;render();if(t>=24)stop();}requestAnimationFrame(loop);}window.seekDemo=time=>{stop();t=clamp(Number(time),0,24);render();};window.getDemoState=()=>({scene,time:t,running});render();requestAnimationFrame(loop);
+</script>
+</html>

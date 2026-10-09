@@ -1,0 +1,7 @@
+# README 插图
+
+使用内置 image-gen 生成，2026-10-09。插图表现讲解从具体问题、操作与推理走向视觉理解的过程，不代表具体算法的计算输出。
+
+## 提示词
+
+Use case: illustration-story. Asset type: wide hero banner for the GitHub README of an open-source Codex skill named video-explainer. Create an exceptionally polished, minimal dark GitHub developer aesthetic editorial illustration, landscape 16:9, deep charcoal background (#0d1117), precise delicate geometry and restrained cyan, soft gold, purple accents. Main idea: explaining knowledge from first principles through animation. A flowing left-to-right visual journey: on the left scattered points and a small question mark representing a concrete question; in the middle a single clear coordinate plane, vectors, a selection frame and connected abstract steps representing manipulation and reasoning; on the right the same points resolve into a coherent luminous geometric pattern inside a subtle video frame with a small play triangle. Stable colored objects visibly persist across stages. Large breathing space, beautifully aligned shapes, premium open source project banner rather than busy infographic. Typography only exact text 'video-explainer' at upper left and a smaller exact subtitle 'From first principles to visual understanding'. Crisp highly readable typography, no other text, no numeric claims, no fake code, no GitHub logo, no mascots, no copied 3Blue1Brown characters, no photorealism, no excessive neon glow or gradients. Original scientific animation inspired design, suitable for display at 900px width.

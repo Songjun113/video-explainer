@@ -1,0 +1,4 @@
+interface:
+  display_name: "视频讲解"
+  short_description: "设计3Blue1Brown风格的讲稿、分镜和Manim机制动画"
+  default_prompt: "使用 $video-explainer，为这个主题设计贯穿例子、中文讲稿和3Blue1Brown风格的Manim动画分镜。"
