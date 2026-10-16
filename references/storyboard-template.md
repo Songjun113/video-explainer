@@ -22,6 +22,10 @@ beats:
     purpose: 让观众先找到对象
   - time: [21, 26]
     action: 连续改变该条件，同时展示两个输出状态
+    driver: 一个参数，由同一状态计算各视图
+    response: 主图、数值标记、相关公式共同响应
+    invariant: 当前推导要求保持的关系或参照
+    intermediate_check: 在变化中点核对数值与图形一致
     purpose: 显出旧表示不能区分的情况
   - time: [26, 31]
     action: 冻结最终状态，出现缺失信息的名称

@@ -6,7 +6,7 @@
 
 一个面向 Codex 的知识讲解 skill，用于设计中文讲稿、字幕、分镜与机制动画。借鉴 3Blue1Brown 的视觉讲解方法，优先使用 Manim 制作数学、算法与科研解释。
 
-[讲解方法](references/first-principles.md) · [分镜模板](references/storyboard-template.md) · [Manim 制作](references/manim-workflow.md) · [交互演示](assets/mechanism-demo.html)
+[讲解方法](references/first-principles.md) · [分镜模板](references/storyboard-template.md) · [动作设计](references/motion-design.md) · [Manim 制作](references/manim-workflow.md) · [交互演示](assets/mechanism-demo.html)
 
 ## 为什么这样讲
 
@@ -17,6 +17,22 @@
 例如解释 PPV，先展示“20人中8人有效；模型圈出6人，其中4人有效”，让观众数出4/6，再为这个比例命名。接着收紧选择范围，观察可靠性和漏掉的人数怎样一起变化，引出阈值与灵敏度。
 
 数学关系展示推导，经验结论注明证据。动画承担解释：筛选揭示分母、投影揭示信息损失、变量变化揭示关系与不变量。
+
+## 让动画与短字幕共同解释
+
+先明确观众已经学过什么。面向只有数学分析基础的观众时，从函数、导数、积分与三角函数建立关系，再引入所需术语。
+
+- 把复制、加权、换元与累加做成可观察的过程，核对中间状态。
+- 用同一参数驱动曲线、图像和数值，保持角色颜色与显示尺度一致。
+- 按语义项追踪公式中的变量替换和系数对应。
+- 字幕一句表达一个短意思，并与当前动作或读图停顿对应。
+- 先试制最难的一镜，再扩充全片；记录实际渲染时钟生成字幕与章节。
+
+详见 [让动作承担推理](references/motion-design.md)。新增 [联动模板](assets/manim_motion_template.py) 用同一振幅参数更新曲线、振幅柱与二维条纹，无需 TeX：
+
+```powershell
+python -m manim -ql assets/manim_motion_template.py CoupledViews
+```
 
 ## 可以做什么
 
@@ -95,6 +111,7 @@ video-explainer/
 ├── references/
 │   ├── first-principles.md         # 推导方法与EEG教学示例
 │   ├── storyboard-template.md      # 分镜记录
+│   ├── motion-design.md           # 视觉节拍、语义变换与联动验收
 │   ├── motion-recipes.md           # 机制动画方法
 │   ├── manim-workflow.md           # 版本、实现与验证
 │   ├── 3blue1brown-sources.md      # 官方资料与查证边界
